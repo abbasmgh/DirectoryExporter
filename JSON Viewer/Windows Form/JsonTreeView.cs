@@ -53,7 +53,7 @@ namespace Alex75.JsonViewer.WindowsForm
                 }
             }
 
-            this.ImageList = treeImages;            
+            this.ImageList = treeImages;
         }
 
         public void ShowJson(string jsonString)
@@ -65,7 +65,7 @@ namespace Alex75.JsonViewer.WindowsForm
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         private void LoadTree(JObject json)
         {
-            Nodes.Clear();            
+            Nodes.Clear();
 
             var rootNode = new JsonTreeNode(NodeType.Object, "(root)");
             Nodes.Add(rootNode);
@@ -82,6 +82,8 @@ namespace Alex75.JsonViewer.WindowsForm
         private void AddNode(JsonTreeNode parentNode, string property, JToken item)
         {
             var node = JsonTreeNodeCreator.CreateNode(property, item);
+            if (node.Text.Contains("Path"))
+                parentNode.Text = node.Text.Replace("Path:", "");
             parentNode.Nodes.Add(node);
 
             if (item.Type == JTokenType.Array)
@@ -160,7 +162,7 @@ namespace Alex75.JsonViewer.WindowsForm
             get { return base.SelectedNode as JsonTreeNode; }
             set { base.SelectedNode = value; ; }
         }
-        
+
         #region UI events
 
         private void this_AfterSelect(object sender, TreeViewEventArgs e)
@@ -173,7 +175,7 @@ namespace Alex75.JsonViewer.WindowsForm
             previouslySelectedNode = e.Node;
             previouslySelectedNodeText = e.Node.Text;
 
-            e.Node.Text = ((JsonTreeNode)e.Node).TextWhenSelected;
+            e.Node.Text = ((JsonTreeNode)e.Node).Text;
         }
 
         private void this_MouseDown(object sender, MouseEventArgs e)
@@ -195,15 +197,18 @@ namespace Alex75.JsonViewer.WindowsForm
         }
 
         private void expandAllMenuItem_Click(object sender, EventArgs e)
-        {   
+        {
             if (SelectedNode != null)
             {
                 BeginUpdate();
                 SelectedNode.ExpandAll();
                 EndUpdate();
-            }       
+            }
         }
 
         #endregion
+
+
+    
     }
 }
